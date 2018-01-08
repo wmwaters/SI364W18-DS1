@@ -54,8 +54,14 @@ def displayData():
 ## Task 4
 ## Note : Since this is a dyanmic URL, recipes function should recieve a paramter called `ingrdient` 
 @app.route('/recipe/<ingredient>')
-def recipes():
-    pass
+def recipes(ingredient):
+    req = requests.get("http://www.recipepuppy.com/api/?i=" + ingredient)
+    ans = json.loads(req.text)
+    recipes = ans.get("results")
+    recipe_list = []
+    for item in recipes:
+      recipe_list.append(item.get("title"))
+    return str(recipe_list)
 
 if __name__ == '__main__':
     app.run()
