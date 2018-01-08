@@ -1,4 +1,6 @@
 from flask import Flask, request
+import requests
+import json
 
 app = Flask(__name__)
 app.debug = True
@@ -22,7 +24,7 @@ def enterData():
     s = """<!DOCTYPE html>
 <html>
 <body>
-<form>
+<form action = "/result" method = "POST">
   INGREDIENT:<br>
   <input type="text" name="ingredient" value="eggs">
   <br>
@@ -39,8 +41,15 @@ def enterData():
 ## to display recipes for the ingredient entered
 @app.route('/result',methods = ['POST', 'GET'])
 def displayData():
-    if request.method == 'POST':
-        pass
+  if request.method == 'POST':
+    ingredient = request.form['ingredient']
+    req = requests.get("http://www.recipepuppy.com/api/?i=" + ingredient)
+    ans = json.loads(req.text)
+    recipes = ans.get("results")
+    recipe_list = []
+    for item in recipes:
+      recipe_list.append(item.get("title"))
+  return str(recipe_list)
 
 ## Task 4
 ## Note : Since this is a dyanmic URL, recipes function should recieve a paramter called `ingrdient` 
